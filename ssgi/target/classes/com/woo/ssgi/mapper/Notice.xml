@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	<mapper namespace="NoticeIDAO">
+	
+	
+		<!-- 관리자 공지사항 리스트 페이지 -->
+		<select id="AdminList" resultType="com.woo.ssgi.dto.NoticeDTO">
+			SELECT  NOTICE_NUM, NOTICE_TITLE, NOTICE_NAME,NOTICE_CONTENT, NOTICE_DATE FROM NOTICE ORDER BY NOTICE_NUM ASC
+		</select>
+		<!-- 공지사항 리스트 페이지 -->
+		<select id="NomalList" resultType="com.woo.ssgi.dto.NoticeDTO">
+			SELECT  NOTICE_NUM, NOTICE_TITLE, NOTICE_NAME,NOTICE_CONTENT FROM NOTICE ORDER BY NOTICE_NUM ASC
+		</select>
+		
+		<!-- 공지사항 삭제 (관리자 권한)-->
+		<delete id="NoticeDelete" parameterType="int">
+			DELETE FROM NOTICE WHERE NOTICE_NUM = #{NOTICE_NUM}
+		</delete>
+		
+		<!-- 공지사항 작성 (관리자 권한)-->
+		<insert id="NoticeWrite" parameterType="com.woo.ssgi.dto.NoticeDTO">
+			INSERT INTO NOTICE( NOTICE_NUM, NOTICE_TITLE, NOTICE_NAME, NOTICE_CONTENT,NOTICE_DATE)
+				VALUES(NOTICE_SEQ.nextval, #{NOTICE_TITLE}, #{NOTICE_NAME}, #{NOTICE_CONTENT},SYSDATE)
+		</insert>
+		
+		<!-- 공지사항 수정 페이지 (관리자 권한)-->
+		<select id="NoticeDetail" parameterType="int" resultType="com.woo.ssgi.dto.NoticeDTO">
+			SELECT * FROM NOTICE WHERE NOTICE_NUM = #{NOTICE_NUM}
+		</select>
+		
+		
+		<!-- 관리자 공지사항  상세보기-->
+		<select id="AdminNoticeDetail" parameterType="int" resultType="com.woo.ssgi.dto.NoticeDTO">
+			SELECT * FROM NOTICE WHERE NOTICE_NUM = #{NOTICE_NUM}
+		</select>
+		
+		<!-- 공지사항 상세보기 -->
+		<select id="NoticeModify" parameterType="int" resultType="com.woo.ssgi.dto.NoticeDTO">
+			SELECT * FROM NOTICE WHERE NOTICE_NUM = #{NOTICE_NUM}
+		</select>
+		
+		<update id="NoticeModifyOK" parameterType="com.woo.ssgi.dto.NoticeDTO">
+			UPDATE NOTICE SET NOTICE_TITLE = #{NOTICE_TITLE}, NOTICE_CONTENT = #{NOTICE_CONTENT}  WHERE NOTICE_NUM = #{NOTICE_NUM}
+		</update>
+		
+		
+		
+	
+	
+	
+	</mapper>

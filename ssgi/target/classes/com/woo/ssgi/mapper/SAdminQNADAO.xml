@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	<mapper namespace="SAdminQNAIDAO">
+	<!--                             여기서부터 S 판매자 답변 XML                                             	 -->
+		<select id="list" resultType="com.woo.ssgi.dto.SQNADTO">
+			SELECT  AS_QNA_NUM, AS_QNA_TITLE, AS_QNA_CONTENT,USER_ID, AS_QNA_ANSWER, AS_QNA_HIDE, AS_QNA_READ, AS_QNA_DATE FROM ADMIN_S_QNA ORDER BY AS_QNA_NUM ASC
+		</select>
+		
+		<select id="SAdminQNAWrite" parameterType="int" resultType="com.woo.ssgi.dto.SQNADTO">
+			SELECT * FROM ADMIN_S_QNA WHERE AS_QNA_NUM = #{AS_QNA_NUM}
+		</select>
+		
+		<update id="SAdminQNAWriteOK" parameterType="com.woo.ssgi.dto.SQNADTO">
+			UPDATE ADMIN_S_QNA SET AS_QNA_READ = #{AS_QNA_READ}, AS_QNA_ANSWER = #{AS_QNA_ANSWER}  WHERE AS_QNA_NUM = #{AS_QNA_NUM}
+		</update>
+		
+		<select id="SAdminOK" resultType="int">
+			SELECT COUNT(*) FROM ADMIN_S_QNA 
+			WHERE AS_QNA_HIDE = #{AS_QNA_READ}
+		</select>
+		
+<!--                             	여기까지 S 판매자 답변 XML                                             	 -->
+	
+	
+
+	
+	
+	
+	</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	<mapper namespace="UAdminQNAIDAO">
+	
+
+	
+	
+
+<!--     여기서부터 U 일반회원 답변 XML                                             	 -->
+		<select id="list" resultType="com.woo.ssgi.dto.UQNADTO">
+				SELECT AU_QNA_NUM,AU_QNA_TITLE,AU_QNA_CONTENT,USER_ID,AU_QNA_ANSWER,AU_QNA_HIDE,AU_QNA_READ, AU_QNA_DATE FROM ADMIN_U_QNA ORDER BY AU_QNA_NUM ASC
+		</select>
+		
+		<select id="UAdminQNAWrite" parameterType="int" resultType="com.woo.ssgi.dto.UQNADTO">
+			SELECT * FROM ADMIN_U_QNA WHERE AU_QNA_NUM = #{AU_QNA_NUM}
+		</select>
+		
+		<update id="UAdminQNAWriteOK" parameterType="com.woo.ssgi.dto.UQNADTO">
+			UPDATE ADMIN_U_QNA SET AU_QNA_READ = #{AU_QNA_READ}, AU_QNA_ANSWER = #{AU_QNA_ANSWER}  WHERE AU_QNA_NUM = #{AU_QNA_NUM}
+		</update>
+<!--                             	여기까지  U 일반회원  답변 XML                                             	 -->
+
+		<!-- 답변완료 비교 -->
+		<select id="UAdminOK" resultType="int">
+			SELECT COUNT(*) FROM ADMIN_U_QNA 
+			WHERE AU_QNA_HIDE = #{AU_QNA_READ}
+		</select>
+		
+
+
+
+
+
+</mapper>
+
+
+
+
+
+	
+
+
+
+

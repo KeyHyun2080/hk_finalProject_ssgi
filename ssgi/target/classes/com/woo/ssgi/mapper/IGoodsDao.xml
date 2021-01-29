@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="gdm">
+<!-- com.woo.ssgi.dao. -->
+	
+	<resultMap type="com.woo.ssgi.dto.GoodsImageMapDto" id="goodsImageMap">
+		<association property="goodsDto" javaType="com.woo.ssgi.dto.GoodsDto">
+			<id column="goods_num" jdbcType="VARCHAR" property="goods_num" />
+			<result column="goods_num" jdbcType="VARCHAR" property="goods_num" />
+			<result column="user_id" jdbcType="VARCHAR" property="user_id" />
+			<result column="goods_name" jdbcType="VARCHAR" property="goods_name" />
+			<result column="goods_price" jdbcType="BIGINT" property="goods_price" />
+			<result column="goods_content" jdbcType="VARCHAR" property="goods_content" />
+			<result column="qty" jdbcType="BIGINT" property="qty" />
+			<result column="g_category" jdbcType="VARCHAR" property="g_category" />
+		</association>
+		<collection property="goodsImageDto" ofType="com.woo.ssgi.dto.GoodsImageDto">
+			<id column="goods_img_seq" jdbcType="BIGINT" property="goods_img_seq" />
+			<result column="goods_num" jdbcType="VARCHAR" property="goods_num" />
+			<result column="goods_img_seq" jdbcType="BIGINT" property="goods_img_seq" />
+			<result column="goods_image" jdbcType="VARCHAR" property="goods_image" />
+		</collection>
+	</resultMap>
+	
+	<select id="sGoodsList" resultMap="goodsImageMap">
+		select g.goods_num, g.goods_name, i.goods_image, g.goods_price, g.qty
+		from goods g, goods_img i
+		where g.goods_num = i.goods_num
+		order by goods_num
+	</select>
+	
+	<insert id="addGoodsPro" parameterType="com.woo.ssgi.dto.GoodsDto" >
+		insert into goods (user_id, goods_num, goods_name, goods_price, goods_content, qty, g_category)
+		values (#{user_id}, #{goods_num}, #{goods_name}, #{goods_price}, #{goods_content}, #{qty}, #{g_category})
+	</insert>
+	
+	<insert id="addGoodsImage" parameterType="com.woo.ssgi.dto.GoodsImageDto" >
+		insert into goods_img (goods_num, goods_img_seq, goods_image)
+		values (#{goods_num}, goods_img_seq.nextval, #{goods_image})
+	</insert>
+	
+	<select id="sGoodsDetail" parameterType="String" resultMap="goodsImageMap">
+		select g.goods_num, g.goods_name, i.goods_img_seq, i.goods_image, g.goods_price, g.qty, g.goods_content
+		from goods g, goods_img i
+		where g.goods_num = i.goods_num
+		and g.goods_num = #{goods_num}
+	</select>
+</mapper>

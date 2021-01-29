@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ssdm">
+<!-- com.woo.ssgi.dao.ISSDao -->
+	
+	<resultMap type="com.woo.ssgi.dto.SILDto" id="SILMap">
+		<association property="storeDto" javaType="com.woo.ssgi.dto.StoreDto">
+			<id column="store_seq" property="store_seq"/>
+			<result column="store_seq" property="store_seq"/>
+			<result column="user_id" property="user_id"/>
+			<result column="store_name" property="store_name"/>
+			<result column="store_owner" property="store_owner"/>
+			<result column="store_intro" property="store_intro"/>
+			<result column="store_ph" property="store_ph"/>
+			<result column="store_addr" property="store_addr"/>
+			<result column="store_addr2" property="store_addr2"/>
+			<result column="store_open" property="store_open"/>
+			<result column="store_close" property="store_close"/>
+			<result column="store_state" property="store_state"/>
+			<result column="t24h" property="t24h"/>
+			<result column="store_category" property="store_category"/>
+			<result column="store_bank" property="store_bank"/>
+			<result column="store_account" property="store_account"/>
+			<result column="s_license_b_img" property="s_license_b_img"/>
+			<result column="s_license_s_img" property="s_license_s_img"/>
+			<result column="s_license_num" property="s_license_num"/>
+			<result column="s_admin_state" property="s_admin_state"/>
+			<result column="s_agreement" property="s_agreement"/>
+		</association>
+		<collection property="siDto" javaType="com.woo.ssgi.dto.StoreImgDto">
+			<id column="store_img_seq" property="store_img_seq" />
+			<result column="store_seq" property="store_seq" />
+			<result column="store_img_seq" property="store_img_seq" />
+			<result column="store_image" property="store_image" />
+		</collection>
+		<collection property="slDto" javaType="com.woo.ssgi.dto.StoreLocationDto">
+			<id column="store_location_seq" property="store_img_seq" />
+			<result column="store_seq" property="store_seq" />
+			<result column="store_location_seq" property="store_img_seq" />
+			<result column="store_latitude" property="store_latitude" />
+			<result column="store_longitude" property="store_longitude" />
+		</collection>
+	</resultMap>
+	
+	<select id="storeList" resultMap="SILMap">
+		select i.store_image, s.store_name, s.store_seq
+		from store_img i, store s
+		where i.store_seq = s.store_seq		
+	</select>
+	
+	
+	
+	<insert id="addStorePro" parameterType="com.woo.ssgi.dto.StoreDto">
+		insert into store (user_id, store_seq, store_name, store_owner, store_intro, store_ph, store_addr, store_addr2, store_open, store_close, store_state, t24h, store_category, store_bank, store_account, s_license_b_img, s_license_s_img, s_license_num, s_admin_state, s_agreement)
+		values (#{user_id}, store_seq.nextval, #{store_name}, #{store_owner}, #{store_intro}, #{store_ph}, #{store_addr}, #{store_addr2}, #{store_open}, #{store_close}, #{store_state}, #{t24h}, #{store_category}, #{store_bank}, #{store_account}, #{s_license_b_img}, #{s_license_s_img}, #{s_license_num}, #{s_admin_state}, #{s_agreement})
+		<selectKey keyProperty="store_seq" resultType="int" order="AFTER">
+			select store_seq.currval from dual
+		</selectKey>
+	</insert>
+	
+	<insert id="addStoreImage" parameterType="com.woo.ssgi.dto.StoreImgDto">
+		insert into store_img (store_seq, store_img_seq, store_image)
+		values (#{store_seq}, store_img_seq.nextval, #{store_image})
+	</insert>
+	
+	<select id="storeDetail" parameterType="String" resultMap="SILMap">
+		select si.store_image, s.store_name, s.store_owner, s.store_ph, s.store_addr, s.store_addr2, s.store_intro
+		from store s, store_img si
+		where s.store_seq = si.store_seq
+		and s.store_seq=#{store_seq}
+	</select>
+	
+	
+	<resultMap type="com.woo.ssgi.dto.GoodsImageMapDto" id="goodsImageMap">
+		<association property="goodsDto" javaType="com.woo.ssgi.dto.GoodsDto">
+			<id column="goods_num" property="goods_num" />
+			<result column="goods_num" property="goods_num" />
+			<result column="user_id" property="user_id" />
+			<result column="goods_name" property="goods_name" />
+			<result column="goods_price" property="goods_price" />
+			<result column="goods_content" property="goods_content" />
+			<result column="qty" property="qty" />
+			<result column="g_category" property="g_category" />
+		</association>
+		<collection property="goodsImageDto" ofType="com.woo.ssgi.dto.GoodsImageDto">
+			<id column="goods_img_seq" property="goods_img_seq" />
+			<result column="goods_num" property="goods_num" />
+			<result column="goods_img_seq" property="goods_img_seq" />
+			<result column="goods_image" property="goods_image" />
+		</collection>
+	</resultMap>
+	
+	<select id="goodsList" resultMap="goodsImageMap">
+		select g.goods_name, i.goods_image, g.goods_price , g.goods_num
+		from goods g, goods_img i
+		where g.goods_num = i.goods_num
+	</select>
+	
+	
+	
+	<select id="AdminStoreList" resultType="com.woo.ssgi.dto.StoreDto">
+		select *
+		from STORE			
+	</select>
+	
+		<!-- 상점삭제 -->
+		<delete id="AdminStoreDelete">
+			DELETE 
+			FROM STORE 
+			WHERE store_seq = #{store_seq}
+		</delete>
+		
+	<!-- 동적쿼리 Map을써야됨 -->
+	<update id="AdminStoreUpdate" parameterType="map">
+		Update STORE	set
+	
+		<if test='s_admin_state eq "Y"'>
+			s_admin_state = 'N'
+		</if>
+		<if test='s_admin_state eq "N"'>
+			s_admin_state = 'Y'
+		</if>
+		
+		 WHERE store_seq = #{store_seq}
+	</update>
+	
+	
+	<!-- 일반회원이보는 굿즈디테일 -->
+	<select id="goodsDetail" resultMap="goodsImageMap">
+		select g.goods_num, g.goods_name, g.goods_price, g.goods_content, i.goods_image
+		from goods g, goods_img i
+		where g.goods_num = i.goods_num
+		and g.goods_num = #{goods_num}
+	</select>
+	
+</mapper>

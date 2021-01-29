@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+	xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/security
+			http://www.springframework.org/schema/security/spring-security.xsd">
+	<!-- <http pattern="/angular" security="none"> -->		
+	<http auto-config="true" use-expressions="true">
+		<intercept-url pattern="/" access="permitAll"/>
+		<intercept-url pattern="/main" access="permitAll"/>
+		<intercept-url pattern="mypage" access="hasRole('ROLE_USER','ROLE_SELLER','USER_ADMIN')"/>
+		<intercept-url pattern="/mypage" access="permitAll"/>
+		<intercept-url pattern="/ULogin" access="permitAll"/>
+		<intercept-url pattern="/UAddjoin" access="permitAll"/>
+		<intercept-url pattern="/join" access="permitAll"/>
+		<intercept-url pattern="/style/**" access="permitAll"/>
+		<intercept-url pattern="/html/**" access="permitAll" />
+		<intercept-url pattern="/js/**" access="permitAll" />
+		<intercept-url pattern="/images/**" access="permitAll" />
+		<intercept-url pattern="/login_duplicate" access="permitAll" />
+		<intercept-url pattern="/**" access="permitAll"/>
+		<intercept-url pattern="/store" access="permitAll"/>
+		<intercept-url pattern="store" access="permitAll"/>
+
+		
+		
+		
+		<form-login
+			
+			login-page="/ULogin" 
+			username-parameter="user_id" 
+			password-parameter="user_pw" 
+			default-target-url="/main1"
+			authentication-failure-url="/ULogin?error=1"
+			always-use-default-target="true"/>
+			
+		<!-- <logout invalidate-session="true" logout-url="/logout" logout-success-url="/login?logout=1"/> -->
+		<logout invalidate-session="true" delete-cookies="JSESSIONID,SPRING_SECURITY_REMEMBER_ME_COOKIE"
+			logout-url="/logout" logout-success-url="/main"/>
+		
+	</http>
+
+	<authentication-manager>	<!-- 인증처리 -->
+		<authentication-provider user-service-ref="customUserDetailsService">
+			<password-encoder ref="passwordEncoder"/>
+		</authentication-provider>	
+	</authentication-manager>
+	
+	
+	<beans:bean id="customUserDetailsService" class="com.woo.ssgi.sec.CustomUserDetailsService"/>
+	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>	
+	
+</beans:beans>
+
+
+<!-- 
+<http pattern="/angular" security="none">은  해당요청에 대해서는 security를 적용안함.
+
+auto-config속성은 기본 로그인페이지 / HTTP 기본인증 / 로그아웃 기능 제공 여부
+use-expressions은 SpEL(스프링 express language)사용 여부.(4버전부터는 디폴트가 true)
+<intercept-url pattern="/login" access="permitAll"/>은 URL에 접근하기 위한 권한을 설정 
+pattern 속성은 접근경로 access는 접근권한. access="permitAll은 모두 접근가능
+SpEL이 true이면 spEL로 access가 작성되어야 함.
+spEL은 permitAll,hasRole('ROLE_USER')형식으로 표시
+spEL이 안 문법은 access="ROLE_USER" 형식으로사용.
+
+<form login>은 form 으로 마든 로그인 페이지를 이용.
+login-page="/login"은 사용자가 만든 로그인페이지 요청 경로를 표시(설정 안하면 스프링제공 로그인페이지 사용/)
+default-target-url은 로그인성공시 이동할 페이지.
+authentication-failure-url="/login?error=1"는 로그인 실패시 요청 경로, 1값은 에러코드
+always-use-default-target="true" 는  default-target-rul로 이동 원활히 
+<logout> 은 로그아웃처리 invalidate-session="true"는 세션초기화.  logout-url="/logout"은 로그아웃요청경로
+  logout-success-url="/login?logout=1"은 로그아웃성공시 요청경로및 전달 값
+
+<csrf />는 csrf처리 기본이 true여서 안적어주어도 됨 적용 안하려면 <csrf disabled="true">
+
+hasRole(ROLE_USER) : 해당 Role을 가지고 있는 사용자 허용
+hasAnyRole(ROLE_USER, ROLE_ADMIN....)
+anonymous : 익명이용자 허용
+authenticated : 인증된 사용자 허용
+permitAll : 모든 사용자 허용
+denyAll : 모든 사용자 거부 
+//등급은 ROLE_SUPERVISOR ,ROLE_USER, ROLE_TELLER, ROLE_ADMIN 
+ -->

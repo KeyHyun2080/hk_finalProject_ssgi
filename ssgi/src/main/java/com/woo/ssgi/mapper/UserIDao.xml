@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woo.ssgi.dao.UserIDao">
+
+
+	<!-- 일반 회원가입.  -->
+	<insert id="join" parameterType="com.woo.ssgi.dto.UserDto">
+		insert into USER_LIST (USER_ID, USER_PW, USER_NAME, USER_ADDR, USER_ADDR2, USER_PH, USER_REGIST, USER_AGREE,USER_GENDER,USER_EMAIL,USER_ROLE,user_key )
+				values(#{user_id},#{user_pw},#{user_name},#{user_addr},#{user_addr2},#{user_ph},sysdate,0,0,#{user_email},'USER',0)
+	</insert>
+	
+	
+		<!-- 사업자 회원가입.  -->
+	<insert id="Sjoin" parameterType="com.woo.ssgi.dto.UserDto">
+		insert into USER_LIST (USER_ID, USER_PW, USER_NAME, USER_ADDR, USER_ADDR2, USER_PH, USER_REGIST, USER_AGREE,USER_GENDER,USER_EMAIL,USER_ROLE,user_key )
+				values(#{user_id},#{user_pw},#{user_name},#{user_addr},#{user_addr2},#{user_ph},sysdate,0,0,#{user_email},'SELLER',0)
+	</insert>
+	
+	
+	<!-- id 로그인  -->
+	<select id="login" parameterType="string" resultType="com.woo.ssgi.dto.UserDto">
+		select * from USER_LIST where user_id = #{user_id} and user_key = 'Y'		
+	</select>
+	
+	
+	
+	
+	<!-- id 중복체크  -->
+	<select id="idChk" resultType="int">
+		SELECT COUNT(*) FROM USER_LIST
+		WHERE user_id = #{user_id}
+	</select>
+	
+		<!-- email 중복체크  -->
+	<select id="emailChk" resultType="int">
+		SELECT COUNT(*) FROM USER_LIST
+		WHERE user_email = #{user_email}
+	</select>
+	
+	
+	<!-- 이메일인증 -->
+	<update id="GetKey" parameterType="Map" >
+		update user_list set user_key = #{user_key} where user_id = #{user_id}
+	</update>
+	
+	<!-- 회원 인증키 (난수) Y로 변경 -->
+	<update id ="alter_userKey" parameterType="Map">
+		update user_list set user_key = 'Y' where user_id = #{user_id} and user_key = #{user_key}
+	</update>
+	
+	<!-- 유저 디테일 -->
+	
+		<select id="userDetail" parameterType="string" resultType="com.woo.ssgi.dto.UserDto">
+			SELECT * FROM user_list WHERE user_id = #{user_id}
+		</select>
+		
+	<!-- 유저 수정하기 뷰 -->
+	
+		<select id="userModify" parameterType="string" resultType="com.woo.ssgi.dto.UserDto">
+			SELECT * FROM user_list WHERE user_id = #{user_id}
+		</select>
+		
+	<!-- 유저 수정 -->	
+	
+	<update id="modifyOk" parameterType="com.woo.ssgi.dto.UserDto">
+		update user_list set user_pw = #{user_pw}, user_addr = #{user_addr},user_addr2 = #{user_addr2},user_ph = #{user_ph}
+		where user_id = #{user_id}
+	
+	</update>
+	
+	<!-- 회원탈퇴 -->
+		<delete id="delete">
+			DELETE FROM user_list WHERE user_id = #{user_id}
+		</delete>
+	
+	
+	
+	<!-- 유저리스트 -->
+	
+		<select id="UserList" resultType="com.woo.ssgi.dto.UserDto">
+			SELECT  * from user_list
+		</select>
+	
+	<!-- 유저삭제 -->
+		<delete id="UserListDelete">
+			DELETE FROM user_list WHERE user_id = #{user_id}
+		</delete>
+
+
+
+
+<!-- 동적쿼리 Map을써야됨 -->
+	<update id="UserListUpdate" parameterType="map">
+		Update user_list	set
+	
+		<if test='user_key eq "Y"'>
+			user_key = 'N'
+		</if>
+		<if test='user_key eq "N"'>
+			user_key = 'Y'
+		</if>
+		
+		 WHERE user_id = #{user_id}
+	</update>
+
+</mapper>	

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	<mapper namespace="com.woo.ssgi.dao.QNAIDAO">
+		<!-- 	resultMap : property(dto의 맴버필드), column(DB컬럼명) -->
+	<resultMap type="com.woo.ssgi.dto.UserDto" id="UserDtoMap">
+		<result property="user_id" column="USER_ID"/>
+		<result property="user_pw" column="USER_PW"/>
+		<result property="user_name" column="USER_NAME"/>
+		<result property="user_addr" column="USER_ADDR"/>
+		<result property="user_addr2" column="USER_ADDR2"/>
+		<result property="user_ph" column="USER_PH"/>
+		<result property="user_regist" column="USER_REGIST"/>
+		<result property="user_agree" column="USER_AGREE"/>
+		<result property="user_gender" column="USER_GENDER"/>
+		<result property="user_email" column="USER_EMAIL"/>
+		<result property="user_role" column="USER_ROLE"/>
+		<result property="user_key" column="USER_KEY"/>
+		
+	</resultMap>
+	<!--  -->
+	<resultMap type="com.woo.ssgi.dto.UQNADTO" id="UQNADTOMap">
+		<id property="AU_QNA_NUM" column="AU_QNA_NUM"/>
+		
+		<result property="AU_QNA_NUM" column="AU_QNA_NUM"/>
+		<result property="AU_QNA_TITLE" column="AU_QNA_TITLE"/>
+		<result property="AU_QNA_CONTENT" column="AU_QNA_CONTENT"/>
+		<result property="USER_ID" column="USER_ID"/>
+		<result property="AU_QNA_ANSWER" column="AU_QNA_ANSWER"/>
+		<result property="AU_QNA_HIDE" column="AU_QNA_HIDE"/>
+		<result property="AU_QNA_READ" column="AU_QNA_READ"/>
+		<result property="AU_QNA_DATE" column="AU_QNA_DATE"/>	
+		<collection property="UserDto" resultMap="UserDtoMap"/>	
+	</resultMap>
+
+	
+	
+	
+		<select id="list" resultMap="UQNADTOMap" parameterType="map">
+		
+	SELECT * 
+		FROM (
+			SELECT ROWNUM RN, A.* 
+				FROM (
+	
+			SELECT a.AU_QNA_NUM,a.AU_QNA_TITLE,a.AU_QNA_CONTENT,a.USER_ID,a.AU_QNA_ANSWER,a.AU_QNA_HIDE,a.AU_QNA_READ, a.AU_QNA_DATE 
+			FROM ADMIN_U_QNA a, USER_LIST u 
+			WHERE a.user_id = u.user_id
+			and a.user_id = #{USER_ID }
+			order by a.AU_QNA_DATE desc
+	
+						) A
+				)
+			WHERE RN BETWEEN #{start} AND #{end}
+		
+		
+
+			
+			
+			
+			<!-- ORDER BY AU_QNA_NUM ASC-->
+		</select>
+	
+		<!-- 카운트 -->
+		<select id="count" resultType="int">
+			SELECT COUNT(*) FROM ADMIN_U_QNA where user_id = #{USER_ID }
+		</select>	
+	
+	
+	
+		<insert id="QNAWrite" parameterType="com.woo.ssgi.dto.UQNADTO">
+			INSERT INTO  ADMIN_U_QNA (AU_QNA_NUM, AU_QNA_TITLE, AU_QNA_CONTENT, USER_ID, AU_QNA_ANSWER, AU_QNA_HIDE, AU_QNA_READ ,AU_QNA_DATE)
+				VALUES(ADMIN_U_QNA_seq.nextval,#{AU_QNA_TITLE},#{AU_QNA_CONTENT},#{USER_ID},'','답변완료','읽지 않음',SYSDATE)
+		</insert>
+		
+		<delete id="QNADelete" parameterType="int">
+			DELETE FROM ADMIN_U_QNA WHERE AU_QNA_NUM = #{AU_QNA_NUM}
+		</delete>
+	
+		<select id="QNADetail" parameterType="int" resultType="com.woo.ssgi.dto.UQNADTO">
+			SELECT * FROM ADMIN_U_QNA WHERE AU_QNA_NUM = #{AU_QNA_NUM}
+		</select>
+		
+		
+		<select id="QNAModify" parameterType="int" resultType="com.woo.ssgi.dto.UQNADTO">
+			SELECT * FROM ADMIN_U_QNA WHERE AU_QNA_NUM = #{AU_QNA_NUM}
+		</select>
+		
+		<update id="QNAModifyOK" parameterType="com.woo.ssgi.dto.UQNADTO">
+			UPDATE ADMIN_U_QNA SET AU_QNA_TITLE = #{AU_QNA_TITLE}, AU_QNA_CONTENT = #{AU_QNA_CONTENT}  WHERE AU_QNA_NUM = #{AU_QNA_NUM}
+		</update>
+	
+	
+	</mapper>
